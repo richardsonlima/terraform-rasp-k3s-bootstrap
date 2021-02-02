@@ -6,12 +6,14 @@ resource "null_resource" "raspberrypi" {
     connection {
         type = "ssh"
         user = "${var.username}"
-        private_key = "${file("~/.ssh/id_rsa")}"
-        time_out = "2m"
+        private_key = "${file("${var.key_path}/${var.private_key_name}")}"
+        # The connection will use the local SSH agent for authentication.
+        agent = false
+        timeout = "2m"
         host = "${var.raspberrypi_ip}"
     }
 
-provisioner "remote_exec" {
+provisioner "remote-exec" {
     inline=[
       # SET HOSTNAME 
       "sudo hostnamectl set-hostname ${var.new_hostname}",
